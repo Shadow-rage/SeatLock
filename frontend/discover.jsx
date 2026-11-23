@@ -4,6 +4,7 @@ import { page } from "./navigation";
 
 const categories = ["All Events", ...new Set(events.map((event) => event.category))];
 const cities = new Set(events.map((event) => event.location));
+const featured = events.find((event) => event.tag === "FESTIVAL") || events[0];
 
 function seatsFor(event) {
   return page("seats", {
@@ -23,7 +24,7 @@ export function Discover({ account, logout }) {
   );
 
   return (
-    <div className="website">
+    <div className="website discover-edition">
       <header className="navbar">
         <a className="logo" href={page()}><span className="logo-mark">S</span><span className="logo-word">Seat<span>Lock</span><i>.</i></span></a>
         <nav className="nav-links" aria-label="Main navigation">
@@ -42,9 +43,9 @@ export function Discover({ account, logout }) {
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-image" aria-hidden="true" />
           <div className="hero-content">
-            <div className="eyebrow"><span className="live-dot" /> THE CITY IS YOURS</div>
-            <h1 id="hero-title">Life happens<br /><span>outside.</span></h1>
-            <p>Find the nights, sounds, and stories that stay with you long after the lights come up.</p>
+            <div className="eyebrow">THE SEATLOCK EVENT GUIDE</div>
+            <h1 id="hero-title">Out for<br /><span>the night.</span></h1>
+            <p>Gigs, comedy and theatre across {cities.size} cities. Find a show, pick your seats, and make a night of it.</p>
             <div className="hero-cta-group">
               <a className="hero-button" href="#events">Discover events →</a>
               <a className="hero-button-secondary" href="#categories">Browse categories →</a>
@@ -55,9 +56,15 @@ export function Discover({ account, logout }) {
               ))}
             </div>
           </div>
+          <a className="featured-ticket" href={seatsFor(featured)}>
+            <span className="featured-label">On the bill / {featured.category}</span>
+            <strong>{featured.title}</strong>
+            <span>{featured.date} · {featured.location.split(",")[0]}</span>
+            <span className="featured-arrow" aria-hidden="true">↗</span>
+          </a>
         </section>
         <section className="events-section" id="events" aria-labelledby="events-title">
-          <div className="section-heading"><div><span className="section-label">YOUR NEXT NIGHT OUT</span><h2 id="events-title">Find your <em>scene.</em></h2></div></div>
+          <div className="section-heading"><div><span className="section-label">THE LISTINGS</span><h2 id="events-title">What’s <em>on.</em></h2></div></div>
           <div className="event-toolbar">
             <div className="categories" id="categories">
               {categories.map((item) => <button key={item} className={`category-button${item === category ? " active" : ""}`} aria-pressed={item === category} onClick={() => setCategory(item)}>{item}</button>)}
@@ -75,6 +82,7 @@ export function Discover({ account, logout }) {
                 <div className="event-details">
                   <div className="event-meta"><span>{event.date}</span><span>{event.category}</span></div>
                   <h3>{event.title}</h3>
+                  <p className="edition-venue">{event.venue}</p>
                   <div className="event-footer"><span className="event-location">{event.location}</span><span className="event-price">From {event.price}</span></div>
                   <div className="event-actions">
                     <button className="event-action-button" onClick={() => { setSelected(event); dialog.current.showModal(); }}>View details</button>
